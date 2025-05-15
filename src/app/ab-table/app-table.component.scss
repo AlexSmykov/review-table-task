@@ -1,0 +1,50 @@
+:host {
+    display: block;
+    max-height: calc(100vh - 16rem);
+    max-width: 100%;
+    overflow: auto;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+td {
+    border-bottom: 1px solid var(--tui-base-03);
+    border-top: 1px solid var(--tui-base-03);
+}
+
+.error-message {
+    color: var(--tui-negative);
+    padding: 1rem;
+    background: var(--tui-error-bg);
+    border-radius: var(--tui-radius-m);
+    margin-bottom: 1rem;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    white-space: nowrap;
+    align-items: center;
+}
+
+.input {
+    flex: 1;
+}
+
+.columns {
+    inline-size: 10.625rem;
+}
+
+.match {
+    background: var(--tui-service-selection-background);
+}
