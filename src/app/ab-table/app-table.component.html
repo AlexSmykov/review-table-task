@@ -1,0 +1,83 @@
+<ng-container>
+    <!-- Проверка наличия дефолтных шаблонов -->
+    <ng-container *ngIf="!defaultHeaderTemplate || !defaultCellTemplate">
+        <div class="error-message">
+            Ошибка: необходимо предоставить дефолтные шаблоны для отображения заголовков и ячеек таблицы.
+        </div>
+    </ng-container>
+
+    <!-- Основная таблица -->
+    <tui-loader
+        [overlay]="true"
+        [showLoader]="!!(loading$ | async)"
+    >
+        <table
+            *ngIf="data$ | async as data"
+            tuiTable
+            class="table"
+            [columns]="columns"
+            [direction]="(direction$ | async) ?? -1"
+            [tuiSortBy]="sortKey$ | async"
+            (tuiSortChange)="change($event)"
+        >
+            <thead>
+                <tr tuiThGroup>
+                    <ng-container *ngFor="let columnCode of columns">
+                        <th
+                            tuiTh
+                            *tuiHead="columnCode"
+                            [attr.id]="columnCode"
+                            [tuiSortable]="isColumnSortable(columnCode)"
+                            [resizable]="isColumnResizable(columnCode)"
+                            [style.width.px]="getColumnStartSize(columnCode)"
+                            [style.min-width.px]="getColumnMinSize(columnCode)"
+                            [style.max-width.px]="getColumnMaxSize(columnCode)"
+                            [requiredSort]="isColumnSortable(columnCode)"
+                            (tuiResized)="onColumnWidthChange(columnCode, $event)"
+                        >
+                            <ng-container *ngIf="getHeaderTemplate(columnCode) as headerTemplate">
+                                <ng-container *ngTemplateOutlet="headerTemplate; context: { $implicit: getColumnName(columnCode) }"></ng-container>
+                            </ng-container>
+                        </th>
+                    </ng-container>
+                </tr>
+            </thead>
+            <tbody
+                *tuiLet="data | tuiTableSort as sortedData"
+                tuiTbody
+                [data]="sortedData"
+            >
+                <tr
+                    *ngFor="let item of sortedData"
+                    tuiTr
+                >
+                    <ng-container *ngFor="let columnCode of columns">
+                        <td
+                            *tuiCell="columnCode"
+                            tuiTd
+                        >
+                            <ng-container *ngIf="getCellTemplate(columnCode) as cellTemplate">
+                                <ng-container *ngTemplateOutlet="cellTemplate; context: { $implicit: item[columnCode] }"></ng-container>
+                            </ng-container>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td [colSpan]="columns.length">
+                        <tui-table-pagination
+                            class="tui-space_top-2"
+                            [page]="(page$ | async) || 0"
+                            [total]="totalItems"
+                            (paginationChange)="onPagination($event)"
+                        />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </tui-loader>
+</ng-container>
+
+<!-- Слоты для переопределения контента -->
+<ng-content></ng-content>

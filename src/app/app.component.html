@@ -1,0 +1,68 @@
+<tui-root>
+<main class="main">
+  <div class="content">
+    <h2>Таблица пользователей</h2>
+    <app-table 
+      [columnConfig]="columnConfig"
+      [data]="tableData"
+      [totalItems]="totalItems"
+      [pageSize]="10"
+      [tableName]="'users-table'"
+      (pageChange)="onPageChange($event)"
+      (sortChange)="onSortChange($event)"
+      (columnWidthChange)="onColumnWidthChange($event)">
+      <!-- Дефолтные шаблоны -->
+      <ng-template appTableDefaultHeader let-data>
+        <app-table-header [data]="data">
+          {{ data }}
+        </app-table-header>
+      </ng-template>
+
+      <ng-template appTableDefaultCell let-data>
+        <app-table-cell [data]="data">
+            {{ data }}
+        </app-table-cell>
+      </ng-template>
+      
+      <!-- Кастомный шаблон для колонки "name" -->
+      <ng-container appTableColumnCode="name">
+        <ng-template appHeaderData let-data>
+          <app-table-header [data]="data">
+            📋 {{ data }}
+          </app-table-header>
+        </ng-template>
+        <ng-template appCellData let-data>
+          <app-table-cell [data]="data">
+            👤 {{ data }}
+          </app-table-cell>
+        </ng-template>
+      </ng-container>
+
+      <!-- Кастомный шаблон для колонки "age" -->
+      <ng-container appTableColumnCode="age">
+        <ng-template appCellData let-data>
+          <app-table-cell [data]="data">
+            🔢 {{ data }} лет
+          </app-table-cell>
+        </ng-template>
+      </ng-container>
+      
+    </app-table>
+
+    <div class="table-description">
+      <h3>Конфигурация колонок:</h3>
+      <pre>{{ columnConfig | json }}</pre>
+    </div>
+
+    <div class="table-description">
+      <h3>Пример шаблона таблицы:</h3>
+      <pre>{{ exampleTemplate }}</pre>
+    </div>
+
+
+  </div>
+</main>
+
+<router-outlet />
+
+</tui-root>

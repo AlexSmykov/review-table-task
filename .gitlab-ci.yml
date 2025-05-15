@@ -1,0 +1,42 @@
+# Используем образ Node.js 22 для сборки приложения
+image: node:22
+
+stages:
+  - build
+  - deploy
+
+# Кэширование для ускорения сборки
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - .angular/cache/
+
+# Устанавливаем зависимости перед запуском задач
+before_script:
+  - source ~/.nvm/nvm.sh
+  - nvm use 22.15.0
+  - pnpm i
+
+# Сборка приложения
+build:
+  stage: build
+  script:
+    - pnpm run build --configuration=production --base-href="/${CI_PROJECT_NAME}/"
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+# Публикация на GitLab Pages
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r dist/scratch-table/browser/* public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - master
